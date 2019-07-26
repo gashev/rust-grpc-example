@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  labels:
+    app: grpc
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: grpc
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grpc
+  labels:
+    app: grpc
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: grpc
+    spec:
+      containers:
+        - image: postgres:9.6.2-alpine
+          name: postgresql
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_DB
+              value: books
+            - name: POSTGRES_PASSWORD
+              value: password
+          ports:
+            - containerPort: 5432
+              name: postgresql
