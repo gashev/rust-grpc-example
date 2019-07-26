@@ -1,0 +1,10 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:11.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: books
+      POSTGRES_PASSWORD: password
