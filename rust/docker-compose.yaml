@@ -10,3 +10,9 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+
+  grpc-server:
+    image: docker-local:5000/grpc-server
+    restart: always
+    ports:
+      - "50051:50051"
