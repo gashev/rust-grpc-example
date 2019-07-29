@@ -21,7 +21,7 @@ generate_source_from_proto_file: build_docker
 	docker run -v $$(pwd):/opt docker-local:5000/build:latest protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=/usr/local/cargo/bin/grpc_rust_plugin books.proto
 
 build_server: generate_source_from_proto_file
-	docker run -v $$(pwd):/opt -w /opt/server docker-local:5000/build:latest /bin/bash -c "cargo build --release"
+	docker run -v $$(pwd):/opt -w /opt/app docker-local:5000/build:latest /bin/bash -c "cargo build --release"
 
 grpc_server_docker: build_server
 	cp server/target/release/server ./grpc-server 

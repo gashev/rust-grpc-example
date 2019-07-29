@@ -1,8 +1,12 @@
 [package]
-name = "server"
+name = "app"
 version = "0.1.0"
 authors = ["Oleg Gashev <oleg@gashev.net>"]
 edition = "2018"
+
+[[bin]]
+name = "server"
+path = "src/server.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
