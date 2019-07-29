@@ -21,6 +21,14 @@ struct BooksService;
 impl Books for BooksService {
     fn add_book(&mut self, ctx: ::grpcio::RpcContext, req: AddBookRequest, sink: UnarySink<BookReply>) {
         println!("add_book request");
+        let mut resp = BookReply::default();
+        resp.set_id(1);
+        resp.set_authors(req.get_authors().to_owned());
+        resp.set_title(req.get_title().to_owned());
+        let f = sink
+            .success(resp)
+            .map_err(move |e| println!("failed to reply {:?}: {:?}", req, e));
+        ctx.spawn(f)
     }
     
     fn get_book(&mut self, ctx: ::grpcio::RpcContext, req: GetBookRequest, sink: UnarySink<BookReply>) {
