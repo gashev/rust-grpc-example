@@ -1,6 +1,6 @@
 use std::io::Read;
 use std::sync::Arc;
-use std::{io, thread};
+use std::{io, thread, time};
 
 use futures::sync::oneshot;
 use futures::Future;
@@ -41,19 +41,18 @@ fn main() {
     let service = create_books(BooksService);
     let mut server = ServerBuilder::new(env)
         .register_service(service)
-        .bind("127.0.0.1", 50051)
+        .bind("0.0.0.0", 50051)
         .build()
         .unwrap();
     server.start();
     for &(ref host, port) in server.bind_addrs() {
         println!("listening on {}:{}", host, port);
     }
-    let (tx, rx) = oneshot::channel();
-    thread::spawn(move || {
-        println!("Press ENTER to exit...");
-        let _ = io::stdin().read(&mut [0]).unwrap();
-        tx.send(())
+    let handler = thread::spawn(|| {
+        while true {
+            thread::sleep(time::Duration::from_millis(1000));            
+        };
     });
-    let _ = rx.wait();
-    let _ = server.shutdown().wait();
+
+    handler.join();
 }

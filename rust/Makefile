@@ -24,6 +24,6 @@ build_server: generate_source_from_proto_file
 	docker run -v $$(pwd):/opt -w /opt/app docker-local:5000/build:latest /bin/bash -c "cargo build --release"
 
 grpc_server_docker: build_server
-	cp server/target/release/server ./grpc-server 
+	cp app/target/release/server ./grpc-server 
 	cd grpc-server && docker build . -t docker-local:5000/grpc-server && docker push docker-local:5000/grpc-server 
 	rm -f ./grpc-server/server
