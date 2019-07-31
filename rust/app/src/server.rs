@@ -1,10 +1,7 @@
-use std::io::Read;
-use std::sync::Arc;
-use std::{io, thread, time};
-
-use futures::sync::oneshot;
 use futures::Future;
-use grpcio::{Environment, RpcContext, ServerBuilder, UnarySink};
+use grpcio::{Environment, ServerBuilder, UnarySink};
+use std::{thread, time};
+use std::sync::Arc;
 
 #[path = "../../books.rs"]
 mod books;
@@ -19,21 +16,37 @@ use books::{AddBookRequest, BookReply, GetBookRequest};
 struct BooksService;
 
 impl Books for BooksService {
-    fn add_book(&mut self, ctx: ::grpcio::RpcContext, req: AddBookRequest, sink: UnarySink<BookReply>) {
+    fn add_book(
+        &mut self, 
+        _ctx: ::grpcio::RpcContext, 
+        _req: AddBookRequest, 
+        _sink: UnarySink<BookReply>
+    ) {
         println!("add_book request");
         let mut resp = BookReply::default();
         resp.set_id(1);
-        resp.set_authors(req.get_authors().to_owned());
-        resp.set_title(req.get_title().to_owned());
-        let f = sink
+        resp.set_authors(_req.get_authors().to_owned());
+        resp.set_title(_req.get_title().to_owned());
+        let f = _sink
             .success(resp)
-            .map_err(move |e| println!("failed to reply {:?}: {:?}", req, e));
-        ctx.spawn(f)
+            .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+        _ctx.spawn(f)
     }
     
-    fn get_book(&mut self, ctx: ::grpcio::RpcContext, req: GetBookRequest, sink: UnarySink<BookReply>) {
+    fn get_book(
+        &mut self, 
+        _ctx: ::grpcio::RpcContext, 
+        _req: GetBookRequest, 
+        _sink: UnarySink<BookReply>
+    ) {
         println!("get_book request");
     }
+}
+
+fn sleep() {
+    loop {
+        thread::sleep(time::Duration::from_millis(1000));            
+    };
 }
 
 fn main() {
@@ -48,11 +61,5 @@ fn main() {
     for &(ref host, port) in server.bind_addrs() {
         println!("listening on {}:{}", host, port);
     }
-    let handler = thread::spawn(|| {
-        while true {
-            thread::sleep(time::Duration::from_millis(1000));            
-        };
-    });
-
-    handler.join();
+    thread::spawn(sleep).join().unwrap();
 }
