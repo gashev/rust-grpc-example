@@ -16,3 +16,4 @@ path = "src/client.rs"
 futures = "0.1"
 grpcio = "0.4"
 protobuf = { version = "2", features = ["with-bytes"] }
+db = { path = "../db" }

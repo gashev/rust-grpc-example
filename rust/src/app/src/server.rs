@@ -3,14 +3,16 @@ use grpcio::{Environment, ServerBuilder, UnarySink};
 use std::{thread, time};
 use std::sync::Arc;
 
-#[path = "../../books.rs"]
+#[path = "./../../../books.rs"]
 mod books;
 
-#[path = "../../books_grpc.rs"]
+#[path = "./../../../books_grpc.rs"]
 mod books_grpc;
 
 use books_grpc::{create_books, Books};
 use books::{AddBookRequest, BookReply, GetBookRequest};
+
+use db;
 
 #[derive(Clone)]
 struct BooksService;
@@ -23,10 +25,14 @@ impl Books for BooksService {
         _sink: UnarySink<BookReply>
     ) {
         println!("add_book request");
+        let db_connection = db::establish_connection();
         let mut resp = BookReply::default();
-        resp.set_id(1);
-        resp.set_authors(_req.get_authors().to_owned());
-        resp.set_title(_req.get_title().to_owned());
+        let authors = _req.get_authors();
+        let title = _req.get_title();
+        let book = db::create_book(&db_connection, authors, title);
+        resp.set_id(book.id);
+        resp.set_authors(book.authors);
+        resp.set_title(book.title);
         let f = _sink
             .success(resp)
             .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));

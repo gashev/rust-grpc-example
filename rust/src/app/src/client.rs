@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use grpcio::{ChannelBuilder, EnvBuilder};
 
-#[path = "../../books.rs"]
+#[path = "./../../../books.rs"]
 mod books;
 
-#[path = "../../books_grpc.rs"]
+#[path = "./../../../books_grpc.rs"]
 mod books_grpc;
 
 use books_grpc::BooksClient;

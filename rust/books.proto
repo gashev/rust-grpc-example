@@ -13,11 +13,11 @@ message AddBookRequest {
 }
 
 message BookReply {
-  uint32 id = 1;
+  int32 id = 1;
   string authors = 2;
   string title = 3;
 }
 
 message GetBookRequest {
-  uint32 id = 1;
+  int32 id = 1;
 }
