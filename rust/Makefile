@@ -15,15 +15,20 @@ stop_dockers:
 	docker-compose down
 
 build_docker:
-	cd build && docker build . -t docker-local:5000/build && docker push docker-local:5000/build
+	cd dockers/build && docker build . -t docker-local:5000/build && docker push docker-local:5000/build
 
 generate_source_from_proto_file: build_docker
 	docker run -v $$(pwd):/opt docker-local:5000/build:latest protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=/usr/local/cargo/bin/grpc_rust_plugin books.proto
 
-build_server: generate_source_from_proto_file
-	docker run -v $$(pwd):/opt -w /opt/app docker-local:5000/build:latest /bin/bash -c "cargo build --release"
+build: generate_source_from_proto_file
+	docker run -v $$(pwd):/opt -w /opt/src docker-local:5000/build:latest /bin/bash -c "cargo build --release"
 
-grpc_server_docker: build_server
-	cp app/target/release/server ./grpc-server 
-	cd grpc-server && docker build . -t docker-local:5000/grpc-server && docker push docker-local:5000/grpc-server 
-	rm -f ./grpc-server/server
+server_docker: build
+	cp src/target/release/server ./dockers/server/server 
+	cd dockers/server && docker build . -t docker-local:5000/server && docker push docker-local:5000/server 
+	rm -f ./dockers/server/server
+
+cli_docker: build
+	cp src/target/release/cli ./dockers/cli/cli 
+	cd dockers/cli && docker build . -t docker-local:5000/cli && docker push docker-local:5000/cli 
+	rm -f ./dockers/cli/cli

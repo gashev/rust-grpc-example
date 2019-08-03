@@ -13,7 +13,7 @@ use books::{AddBookRequest, BookReply};
  
 fn main() {
     let env = Arc::new(EnvBuilder::new().build());
-    let ch = ChannelBuilder::new(env).connect("localhost:50051");
+    let ch = ChannelBuilder::new(env).connect("server:50051");
     let client = BooksClient::new(ch);
 
     let mut req = AddBookRequest::default();
