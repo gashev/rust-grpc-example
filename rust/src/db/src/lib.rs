@@ -4,21 +4,32 @@ extern crate dotenv;
 
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
+
+#[macro_use]
+extern crate diesel_migrations;
+use diesel_migrations::embed_migrations;
+
 use dotenv::dotenv;
 use std::env;
+use std::io;
 
 pub mod schema;
 pub mod models;
 
 use self::models::{Book, NewBook};
+embed_migrations!("./migrations");
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL")
         .expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+    let connection = PgConnection::establish(&database_url)
+        .expect(&format!("Error connecting to {}", database_url));
+
+    embedded_migrations::run_with_output(&connection, &mut std::io::stdout());
+
+    return connection;
 }
 
 pub fn create_book<'a>(conn: &PgConnection, authors: &'a str, title: &'a str) -> Book {
