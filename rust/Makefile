@@ -23,12 +23,14 @@ generate_source_from_proto_file: build_docker
 build: generate_source_from_proto_file
 	docker run -v $$(pwd):/opt -w /opt/src docker-local:5000/build:latest /bin/bash -c "cargo build --release"
 
-server_docker: build
+server_docker:
 	cp src/target/release/server ./dockers/server/server 
 	cd dockers/server && docker build . -t docker-local:5000/server && docker push docker-local:5000/server 
 	rm -f ./dockers/server/server
 
-cli_docker: build
+cli_docker:
 	cp src/target/release/cli ./dockers/cli/cli 
 	cd dockers/cli && docker build . -t docker-local:5000/cli && docker push docker-local:5000/cli 
 	rm -f ./dockers/cli/cli
+
+dockers: build server_docker cli_docker
