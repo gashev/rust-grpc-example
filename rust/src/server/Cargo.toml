@@ -9,3 +9,4 @@ futures = "0.1"
 grpcio = "0.4"
 protobuf = { version = "2", features = ["with-bytes"] }
 db = { path = "../db" }
+diesel = { version = "1.0.0", features = ["postgres"] }

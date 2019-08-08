@@ -13,9 +13,19 @@ use books_grpc::{create_books, Books};
 use books::{AddBookRequest, BookReply, GetBookRequest};
 
 use db;
+use diesel::pg::PgConnection;
 
-#[derive(Clone)]
-struct BooksService;
+struct BooksService {
+    connection: PgConnection,
+}
+
+impl Clone for BooksService {
+    fn clone(&self) -> Self {
+        BooksService {
+            connection: db::establish_connection(),
+        }
+    }
+}
 
 impl Books for BooksService {
     fn add_book(
@@ -25,11 +35,10 @@ impl Books for BooksService {
         _sink: UnarySink<BookReply>
     ) {
         println!("add_book request");
-        let db_connection = db::establish_connection();
         let mut resp = BookReply::default();
         let authors = _req.get_authors();
         let title = _req.get_title();
-        let book = db::create_book(&db_connection, authors, title);
+        let book = db::create_book(&self.connection, authors, title);
         resp.set_id(book.id);
         resp.set_authors(book.authors);
         resp.set_title(book.title);
@@ -57,7 +66,7 @@ fn sleep() {
 
 fn main() {
     let env = Arc::new(Environment::new(1));
-    let service = create_books(BooksService);
+    let service = create_books(BooksService {connection: db::establish_connection(),});
     let mut server = ServerBuilder::new(env)
         .register_service(service)
         .bind("0.0.0.0", 50051)

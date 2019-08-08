@@ -246,6 +246,7 @@ name = "server"
 version = "0.1.0"
 dependencies = [
  "db 0.1.0",
+ "diesel 1.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
  "grpcio 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "protobuf 2.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
