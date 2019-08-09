@@ -32,11 +32,7 @@ fn add_command() -> clap::App<'static, 'static> {
             .takes_value(true));
 }
 
-fn main() {
-    let matches = App::new("cli")
-        .subcommand(add_command())
-    .get_matches();
-
+fn add_book(matches: clap::ArgMatches<'static>) {
     if let Some(matches) = matches.subcommand_matches("add") {
         let authors = matches.value_of("authors").unwrap();
         let title = matches.value_of("title").unwrap();
@@ -53,4 +49,12 @@ fn main() {
         let reply: BookReply = client.add_book(&req).expect("rpc");
         println!("received: {}", reply.get_id());
     }
+}
+
+fn main() {
+    let matches = App::new("cli")
+        .subcommand(add_command())
+    .get_matches();
+
+    add_book(matches);
 }
