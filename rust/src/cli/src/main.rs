@@ -14,23 +14,27 @@ use books::{AddBookRequest, BookReply};
 extern crate clap;
 use clap::{Arg, App, SubCommand};
 
+fn add_command() -> clap::App<'static, 'static> {
+    return 
+        SubCommand::with_name("add")
+        .about("add book")
+        .arg(Arg::with_name("authors")
+            .short("a")
+            .long("authors")
+            .help("authors")
+            .required(true)
+            .takes_value(true))
+        .arg(Arg::with_name("title")
+            .short("t")
+            .long("title")
+            .help("title")
+            .required(true)
+            .takes_value(true));
+}
+
 fn main() {
     let matches = App::new("cli")
-        .subcommand(SubCommand::with_name("add")
-            .about("add book")
-            .arg(Arg::with_name("authors")
-                .short("a")
-                .long("authors")
-                .help("authors")
-                .required(true)
-                .takes_value(true))
-            .arg(Arg::with_name("title")
-                .short("t")
-                .long("title")
-                .help("title")
-                .required(true)
-                .takes_value(true))
-        )
+        .subcommand(add_command())
     .get_matches();
 
     if let Some(matches) = matches.subcommand_matches("add") {
