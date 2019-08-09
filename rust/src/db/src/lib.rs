@@ -45,3 +45,9 @@ pub fn create_book<'a>(conn: &PgConnection, authors: &'a str, title: &'a str) ->
         .get_result(conn)
         .expect("Error saving new book")
 }
+
+pub fn get_book<'a>(conn: &PgConnection, id: i32) -> std::result::Result<Book, diesel::result::Error> {
+    use schema::books;
+
+    return books::table.filter(books::id.eq(id)).first(conn);
+}

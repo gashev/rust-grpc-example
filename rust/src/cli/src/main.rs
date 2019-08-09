@@ -9,7 +9,7 @@ mod books;
 mod books_grpc;
 
 use books_grpc::BooksClient;
-use books::{AddBookRequest, BookReply};
+use books::{AddBookRequest, GetBookRequest, BookReply};
 
 extern crate clap;
 use clap::{Arg, App, SubCommand};
@@ -32,7 +32,19 @@ fn add_command() -> clap::App<'static, 'static> {
             .takes_value(true));
 }
 
-fn add_book(matches: clap::ArgMatches<'static>) {
+fn get_command() -> clap::App<'static, 'static> {
+    return 
+        SubCommand::with_name("get")
+        .about("get book")
+        .arg(Arg::with_name("id")
+            .short("i")
+            .long("id")
+            .help("id")
+            .required(true)
+            .takes_value(true));
+}
+
+fn add_book(matches: &clap::ArgMatches<'static>) {
     if let Some(matches) = matches.subcommand_matches("add") {
         let authors = matches.value_of("authors").unwrap();
         let title = matches.value_of("title").unwrap();
@@ -51,10 +63,29 @@ fn add_book(matches: clap::ArgMatches<'static>) {
     }
 }
 
+fn get_book(matches: &clap::ArgMatches<'static>) {
+    if let Some(matches) = matches.subcommand_matches("get") {
+        let id = matches.value_of("id").unwrap();
+
+        println!("{}", id);
+
+        let env = Arc::new(EnvBuilder::new().build());
+        let ch = ChannelBuilder::new(env).connect("server:50051");
+        let client = BooksClient::new(ch);
+
+        let mut req = GetBookRequest::default();
+        req.set_id(id.parse::<i32>().unwrap());
+        let reply: BookReply = client.get_book(&req).expect("rpc");
+        println!("received: {} {} {}", reply.get_id(), reply.get_authors(), reply.get_title());
+    }
+}
+
 fn main() {
     let matches = App::new("cli")
         .subcommand(add_command())
+        .subcommand(get_command())
     .get_matches();
 
-    add_book(matches);
+    add_book(&matches);
+    get_book(&matches);
 }

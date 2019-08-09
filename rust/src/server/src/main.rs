@@ -55,6 +55,21 @@ impl Books for BooksService {
         _sink: UnarySink<BookReply>
     ) {
         println!("get_book request");
+        let mut resp = BookReply::default();
+        let id = _req.get_id();
+        let result = db::get_book(&self.connection, id);
+        match result {
+            Ok(book) => {
+                resp.set_id(book.id);
+                resp.set_authors(book.authors);
+                resp.set_title(book.title);
+                let f = _sink
+                    .success(resp)
+                    .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f)
+            },
+            Err(e) => println!("{:?}", e),
+        }
     }
 }
 
