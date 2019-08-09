@@ -10,4 +10,4 @@ edition = "2018"
 futures = "0.1"
 grpcio = "0.4"
 protobuf = { version = "2", features = ["with-bytes"] }
-clap = {version = "2.33", features = ["yaml"]}
+clap = "2.33"
