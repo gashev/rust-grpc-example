@@ -26,7 +26,8 @@ pub fn establish_connection() -> PgConnection {
     let connection = PgConnection::establish(&database_url)
         .expect(&format!("Error connecting to {}", database_url));
 
-    embedded_migrations::run_with_output(&connection, &mut std::io::stdout());
+    embedded_migrations::run_with_output(&connection, &mut std::io::stdout())
+        .expect("Error run migrations");
 
     return connection;
 }
