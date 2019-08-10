@@ -31,7 +31,11 @@ pub fn establish_connection() -> PgConnection {
     return connection;
 }
 
-pub fn create_book<'a>(conn: &PgConnection, authors: &'a str, title: &'a str) -> Book {
+pub fn create_book<'a>(
+    conn: &PgConnection, 
+    authors: &'a str, 
+    title: &'a str
+) -> Book {
     use schema::books;
 
     let new_book = NewBook {
@@ -45,7 +49,10 @@ pub fn create_book<'a>(conn: &PgConnection, authors: &'a str, title: &'a str) ->
         .expect("Error saving new book")
 }
 
-pub fn get_book<'a>(conn: &PgConnection, id: i32) -> std::result::Result<Book, diesel::result::Error> {
+pub fn get_book<'a>(
+    conn: &PgConnection, 
+    id: i32
+) -> std::result::Result<Book, diesel::result::Error> {
     use schema::books;
 
     return books::table.filter(books::id.eq(id)).first(conn);
