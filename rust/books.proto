@@ -5,6 +5,7 @@ package books;
 service Books {
   rpc AddBook (AddBookRequest) returns (BookReply) {}
   rpc GetBook (GetBookRequest) returns (BookReply) {} 
+  rpc GetBooks (GetBooksRequest) returns (BooksReply) {}
 }
 
 message AddBookRequest {
@@ -20,4 +21,12 @@ message BookReply {
 
 message GetBookRequest {
   int32 id = 1;
+}
+
+message GetBooksRequest {
+
+}
+
+message BooksReply {
+  repeated BookReply items = 1;
 }

@@ -10,7 +10,7 @@ mod books;
 mod books_grpc;
 
 use books_grpc::{create_books, Books};
-use books::{AddBookRequest, BookReply, GetBookRequest};
+use books::{AddBookRequest, BookReply, GetBookRequest, GetBooksRequest, BooksReply};
 
 use db;
 use diesel::pg::PgConnection;
@@ -70,6 +70,15 @@ impl Books for BooksService {
             },
             Err(e) => println!("{:?}", e),
         }
+    }
+
+    fn get_books(
+        &mut self, 
+        _ctx: ::grpcio::RpcContext, 
+        _req: GetBooksRequest, 
+        _sink: UnarySink<BooksReply>
+    ) {
+        println!("get_books request");
     }
 }
 
