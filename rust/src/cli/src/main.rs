@@ -95,8 +95,8 @@ fn get_book(matches: &clap::ArgMatches<'static>) {
 }
 
 fn get_all_books(matches: &clap::ArgMatches<'static>) {
-    if let Some(matches) = matches.subcommand_matches("all") {
-        let mut req = GetBooksRequest::default();
+    if let Some(_matches) = matches.subcommand_matches("all") {
+        let req = GetBooksRequest::default();
         let client = get_books_client();
         let reply: BooksReply = client.get_books(&req).expect("rpc");
         println!("{:?}", reply);
