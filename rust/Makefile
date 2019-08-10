@@ -16,6 +16,12 @@ start:
 stop:
 	docker-compose down
 
+create_pod:
+	kubectl create -f kubernetes.yaml
+
+delete_pod:
+	kubectl delete -f kubernetes.yaml
+
 build_docker:
 	cd dockers/build && docker build . -t docker-local:5000/build && docker push docker-local:5000/build
 
