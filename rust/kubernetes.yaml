@@ -37,7 +37,7 @@ spec:
         app: grpc
     spec:
       containers:
-        - image: postgres:9.6.2-alpine
+        - image: postgres:11.4-alpine
           name: db
           env:
             - name: POSTGRES_USER
