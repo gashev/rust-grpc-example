@@ -11,7 +11,6 @@ use diesel_migrations::embed_migrations;
 
 use dotenv::dotenv;
 use std::env;
-use std::io;
 
 pub mod schema;
 pub mod models;
