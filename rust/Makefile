@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := all
+
 create_docker_registry:
 	docker run -d -p 5000:5000 --restart=always --name registry -v /mnt/registry:/var/lib/registry registry:2
 
@@ -8,10 +10,10 @@ stop_docker_registry:
 destroy_docker_registry: stop_docker_registry
 	rm -rf /mnt/registry
 
-start_dockers:
+start:
 	docker-compose up -d
 
-stop_dockers:
+stop:
 	docker-compose down
 
 build_docker:
@@ -33,4 +35,4 @@ cli_docker:
 	cd dockers/cli && docker build . -t localhost:5000/cli && docker push localhost:5000/cli 
 	rm -f ./dockers/cli/cli
 
-dockers: build server_docker cli_docker
+all: build server_docker cli_docker
