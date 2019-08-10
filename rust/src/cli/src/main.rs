@@ -63,44 +63,38 @@ fn get_books_client() -> BooksClient {
 }
 
 fn add_book(matches: &clap::ArgMatches<'static>) {
-    if let Some(matches) = matches.subcommand_matches("add") {
-        let authors = matches.value_of("authors").unwrap();
-        let title = matches.value_of("title").unwrap();
+    let authors = matches.value_of("authors").unwrap();
+    let title = matches.value_of("title").unwrap();
 
-        println!("{} {}", authors, title);
+    println!("{} {}", authors, title);
 
-        let mut req = AddBookRequest::default();
-        req.set_authors(authors.to_owned());
-        req.set_title(title.to_owned());
-        
-        let client = get_books_client();
-        let reply: BookReply = client.add_book(&req).expect("rpc");
-        println!("received: {}", reply.get_id());
-    }
+    let mut req = AddBookRequest::default();
+    req.set_authors(authors.to_owned());
+    req.set_title(title.to_owned());
+    
+    let client = get_books_client();
+    let reply: BookReply = client.add_book(&req).expect("rpc");
+    println!("received: {}", reply.get_id());
 }
 
 fn get_book(matches: &clap::ArgMatches<'static>) {
-    if let Some(matches) = matches.subcommand_matches("get") {
-        let id = matches.value_of("id").unwrap();
+    let id = matches.value_of("id").unwrap();
 
-        println!("{}", id);
+    println!("{}", id);
 
-        let mut req = GetBookRequest::default();
-        req.set_id(id.parse::<i32>().unwrap());
+    let mut req = GetBookRequest::default();
+    req.set_id(id.parse::<i32>().unwrap());
 
-        let client = get_books_client();
-        let reply: BookReply = client.get_book(&req).expect("rpc");
-        println!("received: {} {} {}", reply.get_id(), reply.get_authors(), reply.get_title());
-    }
+    let client = get_books_client();
+    let reply: BookReply = client.get_book(&req).expect("rpc");
+    println!("received: {} {} {}", reply.get_id(), reply.get_authors(), reply.get_title());
 }
 
-fn get_all_books(matches: &clap::ArgMatches<'static>) {
-    if let Some(_matches) = matches.subcommand_matches("all") {
-        let req = GetBooksRequest::default();
-        let client = get_books_client();
-        let reply: BooksReply = client.get_books(&req).expect("rpc");
-        println!("{:?}", reply);
-    }
+fn get_all_books(_matches: &clap::ArgMatches<'static>) {
+    let req = GetBooksRequest::default();
+    let client = get_books_client();
+    let reply: BooksReply = client.get_books(&req).expect("rpc");
+    println!("{:?}", reply);
 }
 
 fn main() {
@@ -110,7 +104,10 @@ fn main() {
         .subcommand(get_books_command())
     .get_matches();
 
-    add_book(&matches);
-    get_book(&matches);
-    get_all_books(&matches);
+    match matches.subcommand() {
+        ("add", Some(sub_m)) => add_book(&sub_m),
+        ("get", Some(sub_m)) => get_book(&sub_m),
+        ("all", Some(sub_m)) => get_all_books(&sub_m),
+        _ => println!("Incorrect command.")
+    }
 }
