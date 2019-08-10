@@ -9,7 +9,13 @@ mod books;
 mod books_grpc;
 
 use books_grpc::BooksClient;
-use books::{AddBookRequest, GetBookRequest, BookReply, GetBooksRequest, BooksReply};
+use books::{
+    AddBookRequest, 
+    BookReply,
+    BooksReply, 
+    GetBookRequest,
+    GetBooksRequest, 
+};
 
 extern crate clap;
 use clap::{Arg, App, SubCommand};
@@ -50,6 +56,12 @@ fn get_books_command() -> clap::App<'static, 'static> {
         .about("get all books");
 }
 
+fn get_books_client() -> BooksClient {
+    let env = Arc::new(EnvBuilder::new().build());
+    let ch = ChannelBuilder::new(env).connect("server:50051");
+    return BooksClient::new(ch);
+}
+
 fn add_book(matches: &clap::ArgMatches<'static>) {
     if let Some(matches) = matches.subcommand_matches("add") {
         let authors = matches.value_of("authors").unwrap();
@@ -57,13 +69,11 @@ fn add_book(matches: &clap::ArgMatches<'static>) {
 
         println!("{} {}", authors, title);
 
-        let env = Arc::new(EnvBuilder::new().build());
-        let ch = ChannelBuilder::new(env).connect("server:50051");
-        let client = BooksClient::new(ch);
-
         let mut req = AddBookRequest::default();
         req.set_authors(authors.to_owned());
         req.set_title(title.to_owned());
+        
+        let client = get_books_client();
         let reply: BookReply = client.add_book(&req).expect("rpc");
         println!("received: {}", reply.get_id());
     }
@@ -75,12 +85,10 @@ fn get_book(matches: &clap::ArgMatches<'static>) {
 
         println!("{}", id);
 
-        let env = Arc::new(EnvBuilder::new().build());
-        let ch = ChannelBuilder::new(env).connect("server:50051");
-        let client = BooksClient::new(ch);
-
         let mut req = GetBookRequest::default();
         req.set_id(id.parse::<i32>().unwrap());
+
+        let client = get_books_client();
         let reply: BookReply = client.get_book(&req).expect("rpc");
         println!("received: {} {} {}", reply.get_id(), reply.get_authors(), reply.get_title());
     }
@@ -88,11 +96,8 @@ fn get_book(matches: &clap::ArgMatches<'static>) {
 
 fn get_all_books(matches: &clap::ArgMatches<'static>) {
     if let Some(matches) = matches.subcommand_matches("all") {
-        let env = Arc::new(EnvBuilder::new().build());
-        let ch = ChannelBuilder::new(env).connect("server:50051");
-        let client = BooksClient::new(ch);
-
         let mut req = GetBooksRequest::default();
+        let client = get_books_client();
         let reply: BooksReply = client.get_books(&req).expect("rpc");
         println!("{:?}", reply);
     }
