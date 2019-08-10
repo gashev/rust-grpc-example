@@ -57,3 +57,5 @@ spec:
           ports:
             - containerPort: 50051
               name: server
+        - image: docker-local:5000/cli
+          name: client
