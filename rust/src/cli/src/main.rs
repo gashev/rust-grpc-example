@@ -17,44 +17,7 @@ use books::{
     GetBooksRequest,
 };
 
-extern crate clap;
-use clap::{Arg, App, SubCommand};
-
-fn add_book_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("add")
-        .about("add book")
-        .arg(Arg::with_name("authors")
-            .short("a")
-            .long("authors")
-            .help("authors")
-            .required(true)
-            .takes_value(true))
-        .arg(Arg::with_name("title")
-            .short("t")
-            .long("title")
-            .help("title")
-            .required(true)
-            .takes_value(true));
-}
-
-fn get_book_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("get")
-        .about("get book")
-        .arg(Arg::with_name("id")
-            .short("i")
-            .long("id")
-            .help("id")
-            .required(true)
-            .takes_value(true));
-}
-
-fn get_books_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("all")
-        .about("get all books");
-}
+mod cli;
 
 fn get_books_client() -> BooksClient {
     let env = Arc::new(EnvBuilder::new().build());
@@ -103,11 +66,7 @@ fn get_all_books(_matches: &clap::ArgMatches<'static>) {
 }
 
 fn main() {
-    let matches = App::new("cli")
-        .subcommand(add_book_command())
-        .subcommand(get_book_command())
-        .subcommand(get_books_command())
-    .get_matches();
+    let matches = cli::get_cli().get_matches();
 
     match matches.subcommand() {
         ("add", Some(sub_m)) => add_book(&sub_m),
