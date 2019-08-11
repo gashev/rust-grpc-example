@@ -10,18 +10,18 @@ mod books_grpc;
 
 use books_grpc::BooksClient;
 use books::{
-    AddBookRequest, 
+    AddBookRequest,
     BookReply,
-    BooksReply, 
+    BooksReply,
     GetBookRequest,
-    GetBooksRequest, 
+    GetBooksRequest,
 };
 
 extern crate clap;
 use clap::{Arg, App, SubCommand};
 
 fn add_book_command() -> clap::App<'static, 'static> {
-    return 
+    return
         SubCommand::with_name("add")
         .about("add book")
         .arg(Arg::with_name("authors")
@@ -39,7 +39,7 @@ fn add_book_command() -> clap::App<'static, 'static> {
 }
 
 fn get_book_command() -> clap::App<'static, 'static> {
-    return 
+    return
         SubCommand::with_name("get")
         .about("get book")
         .arg(Arg::with_name("id")
@@ -51,7 +51,7 @@ fn get_book_command() -> clap::App<'static, 'static> {
 }
 
 fn get_books_command() -> clap::App<'static, 'static> {
-    return 
+    return
         SubCommand::with_name("all")
         .about("get all books");
 }
@@ -71,7 +71,7 @@ fn add_book(matches: &clap::ArgMatches<'static>) {
     let mut req = AddBookRequest::default();
     req.set_authors(authors.to_owned());
     req.set_title(title.to_owned());
-    
+
     let client = get_books_client();
     let reply: BookReply = client.add_book(&req).expect("rpc");
     println!("received: {}", reply.get_id());
@@ -87,7 +87,12 @@ fn get_book(matches: &clap::ArgMatches<'static>) {
 
     let client = get_books_client();
     let reply: BookReply = client.get_book(&req).expect("rpc");
-    println!("received: {} {} {}", reply.get_id(), reply.get_authors(), reply.get_title());
+    println!(
+        "received: {} {} {}",
+        reply.get_id(),
+        reply.get_authors(),
+        reply.get_title()
+    );
 }
 
 fn get_all_books(_matches: &clap::ArgMatches<'static>) {

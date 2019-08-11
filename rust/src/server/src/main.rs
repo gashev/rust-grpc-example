@@ -10,7 +10,13 @@ mod books;
 mod books_grpc;
 
 use books_grpc::{create_books, Books};
-use books::{AddBookRequest, BookReply, GetBookRequest, GetBooksRequest, BooksReply};
+use books::{
+    AddBookRequest,
+    BookReply,
+    BooksReply,
+    GetBookRequest,
+    GetBooksRequest,
+};
 
 use db;
 use diesel::pg::PgConnection;
@@ -29,9 +35,9 @@ impl Clone for BooksService {
 
 impl Books for BooksService {
     fn add_book(
-        &mut self, 
-        _ctx: ::grpcio::RpcContext, 
-        _req: AddBookRequest, 
+        &mut self,
+        _ctx: ::grpcio::RpcContext,
+        _req: AddBookRequest,
         _sink: UnarySink<BookReply>
     ) {
         println!("add_book request");
@@ -47,11 +53,11 @@ impl Books for BooksService {
             .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
         _ctx.spawn(f)
     }
-    
+
     fn get_book(
-        &mut self, 
-        _ctx: ::grpcio::RpcContext, 
-        _req: GetBookRequest, 
+        &mut self,
+        _ctx: ::grpcio::RpcContext,
+        _req: GetBookRequest,
         _sink: UnarySink<BookReply>
     ) {
         println!("get_book request");
@@ -73,9 +79,9 @@ impl Books for BooksService {
     }
 
     fn get_books(
-        &mut self, 
-        _ctx: ::grpcio::RpcContext, 
-        _req: GetBooksRequest, 
+        &mut self,
+        _ctx: ::grpcio::RpcContext,
+        _req: GetBooksRequest,
         _sink: UnarySink<BooksReply>
     ) {
         println!("get_books request");
@@ -84,21 +90,27 @@ impl Books for BooksService {
 
 fn sleep() {
     loop {
-        thread::sleep(time::Duration::from_millis(1000));            
+        thread::sleep(time::Duration::from_millis(1000));
     };
 }
 
 fn main() {
+    let book_service = BooksService {
+        connection: db::establish_connection(),
+    };
+    let service = create_books(book_service);
     let env = Arc::new(Environment::new(1));
-    let service = create_books(BooksService {connection: db::establish_connection(),});
     let mut server = ServerBuilder::new(env)
         .register_service(service)
         .bind("0.0.0.0", 50051)
         .build()
         .unwrap();
+
     server.start();
+
     for &(ref host, port) in server.bind_addrs() {
         println!("listening on {}:{}", host, port);
     }
+
     thread::spawn(sleep).join().unwrap();
 }
