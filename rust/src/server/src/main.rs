@@ -1,5 +1,11 @@
 use futures::Future;
-use grpcio::{Environment, ServerBuilder, UnarySink, RpcStatus, RpcStatusCode};
+use grpcio::{
+    Environment,
+    RpcStatus,
+    RpcStatusCode,
+    ServerBuilder,
+    UnarySink,
+};
 use std::{thread, time};
 use std::sync::Arc;
 
@@ -75,12 +81,10 @@ impl Books for BooksService {
                 _ctx.spawn(f)
             },
             Err(_e) => {
-                let reply_msg = "Book does not exist";
-
                 let f = _sink
                     .fail(RpcStatus::new(
-                        RpcStatusCode::NotFound,
-                        Some(reply_msg.to_string()),
+                        RpcStatusCode::Unknown,
+                        Some(_e.to_string()),
                     ))
                 .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
                 _ctx.spawn(f);
