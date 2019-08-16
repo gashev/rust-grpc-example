@@ -47,13 +47,18 @@ pub fn get_book(matches: &clap::ArgMatches<'static>) {
     req.set_id(id.parse::<i32>().unwrap());
 
     let client = get_books_client();
-    let reply: BookReply = client.get_book(&req).expect("rpc");
-    println!(
-        "received: {} {} {}",
-        reply.get_id(),
-        reply.get_authors(),
-        reply.get_title()
-    );
+    let reply = client.get_book(&req);
+
+    match reply {
+        Ok(book) => println!(
+            "received: {} {} {}",
+            book.get_id(),
+            book.get_authors(),
+            book.get_title()
+        ),
+        Err(e) => println!("{:?}", e)
+    }
+
 }
 
 pub fn get_all_books(_matches: &clap::ArgMatches<'static>) {
