@@ -20,8 +20,11 @@ use books::{
     AddBookRequest,
     BookReply,
     BooksReply,
+    DeleteBookReply,
+    DeleteBookRequest,
     GetBookRequest,
     GetBooksRequest,
+    UpdateRequest,
 };
 
 use db;
@@ -100,6 +103,22 @@ impl Books for BooksService {
     ) {
         println!("get_books request");
     }
+
+    fn update_book(
+        &mut self,
+        _ctx: ::grpcio::RpcContext,
+        _req: UpdateRequest,
+        _sink: UnarySink<BookReply>) {
+        println!("update_book request");
+    }
+
+    fn delete_book(
+        &mut self,
+        _ctx: ::grpcio::RpcContext,
+        _req: DeleteBookRequest,
+        _sink: UnarySink<DeleteBookReply>) {
+            println!("delete_book request");
+        }
 }
 
 fn sleep() {

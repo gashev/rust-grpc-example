@@ -4,8 +4,10 @@ package books;
 
 service Books {
   rpc AddBook (AddBookRequest) returns (BookReply) {}
-  rpc GetBook (GetBookRequest) returns (BookReply) {} 
+  rpc GetBook (GetBookRequest) returns (BookReply) {}
   rpc GetBooks (GetBooksRequest) returns (BooksReply) {}
+  rpc UpdateBook (UpdateRequest) returns (BookReply) {}
+  rpc DeleteBook (DeleteBookRequest) returns (DeleteBookReply) {}
 }
 
 message AddBookRequest {
@@ -29,4 +31,18 @@ message GetBooksRequest {
 
 message BooksReply {
   repeated BookReply items = 1;
+}
+
+message UpdateRequest {
+  int32 id = 1;
+  string authors = 2;
+  string title = 3;
+}
+
+message DeleteBookRequest {
+  int32 id = 1;
+}
+
+message DeleteBookReply {
+  bool deleted = 1;
 }
