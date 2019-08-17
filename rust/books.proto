@@ -6,7 +6,7 @@ service Books {
   rpc AddBook (AddBookRequest) returns (BookReply) {}
   rpc GetBook (GetBookRequest) returns (BookReply) {}
   rpc GetBooks (GetBooksRequest) returns (BooksReply) {}
-  rpc UpdateBook (UpdateRequest) returns (BookReply) {}
+  rpc UpdateBook (UpdateBookRequest) returns (BookReply) {}
   rpc DeleteBook (DeleteBookRequest) returns (DeleteBookReply) {}
 }
 
@@ -33,7 +33,7 @@ message BooksReply {
   repeated BookReply items = 1;
 }
 
-message UpdateRequest {
+message UpdateBookRequest {
   int32 id = 1;
   string authors = 2;
   string title = 3;

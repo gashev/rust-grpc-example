@@ -24,7 +24,7 @@ use books::{
     DeleteBookRequest,
     GetBookRequest,
     GetBooksRequest,
-    UpdateRequest,
+    UpdateBookRequest,
 };
 
 use db;
@@ -107,7 +107,7 @@ impl Books for BooksService {
     fn update_book(
         &mut self,
         _ctx: ::grpcio::RpcContext,
-        _req: UpdateRequest,
+        _req: UpdateBookRequest,
         _sink: UnarySink<BookReply>) {
         println!("update_book request");
     }

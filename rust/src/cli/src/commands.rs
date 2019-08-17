@@ -13,8 +13,10 @@ use books::{
     AddBookRequest,
     BookReply,
     BooksReply,
+    DeleteBookRequest,
     GetBookRequest,
     GetBooksRequest,
+    UpdateBookRequest,
 };
 
 fn get_books_client() -> BooksClient {
@@ -58,7 +60,6 @@ pub fn get_book(matches: &clap::ArgMatches<'static>) {
         ),
         Err(e) => println!("{:?}", e)
     }
-
 }
 
 pub fn get_all_books(_matches: &clap::ArgMatches<'static>) {
@@ -66,4 +67,50 @@ pub fn get_all_books(_matches: &clap::ArgMatches<'static>) {
     let client = get_books_client();
     let reply: BooksReply = client.get_books(&req).expect("rpc");
     println!("{:?}", reply);
+}
+
+pub fn update_book(matches: &clap::ArgMatches<'static>) {
+    let id = matches.value_of("id").unwrap();
+    let authors = matches.value_of("authors").unwrap();
+    let title = matches.value_of("title").unwrap();
+
+    println!("{} {} {}", id, authors, title);
+
+    let mut req = UpdateBookRequest::default();
+    req.set_id(id.parse::<i32>().unwrap());
+    req.set_authors(authors.to_owned());
+    req.set_title(title.to_owned());
+
+    let client = get_books_client();
+    let reply = client.update_book(&req);
+
+    match reply {
+        Ok(book) => println!(
+            "received: {} {} {}",
+            book.get_id(),
+            book.get_authors(),
+            book.get_title()
+        ),
+        Err(e) => println!("{:?}", e)
+    }
+}
+
+pub fn delete_book(matches: &clap::ArgMatches<'static>) {
+    let id = matches.value_of("id").unwrap();
+
+    println!("{}", id);
+
+    let mut req = DeleteBookRequest::default();
+    req.set_id(id.parse::<i32>().unwrap());
+
+    let client = get_books_client();
+    let reply = client.delete_book(&req);
+
+    match reply {
+        Ok(book) => println!(
+            "received: {:?}",
+            book
+        ),
+        Err(e) => println!("{:?}", e)
+    }
 }
