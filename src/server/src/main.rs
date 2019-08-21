@@ -110,6 +110,31 @@ impl Books for BooksService {
         _req: UpdateBookRequest,
         _sink: UnarySink<BookReply>) {
         println!("update_book request");
+        let mut resp = BookReply::default();
+        let id = _req.get_id();
+        let authors = _req.get_authors();
+        let title = _req.get_title();
+        let result = db::update_book(&self.connection, id, authors, title);
+        match result {
+            Ok(book) => {
+                resp.set_id(book.id);
+                resp.set_authors(book.authors);
+                resp.set_title(book.title);
+                let f = _sink
+                    .success(resp)
+                    .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f)
+            },
+            Err(_e) => {
+                let f = _sink
+                    .fail(RpcStatus::new(
+                        RpcStatusCode::Unknown,
+                        Some(_e.to_string()),
+                    ))
+                .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f);
+            }
+        }
     }
 
     fn delete_book(

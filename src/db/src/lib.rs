@@ -33,8 +33,8 @@ pub fn establish_connection() -> PgConnection {
 }
 
 pub fn create_book<'a>(
-    conn: &PgConnection, 
-    authors: &'a str, 
+    conn: &PgConnection,
+    authors: &'a str,
     title: &'a str
 ) -> Book {
     use schema::books;
@@ -51,10 +51,29 @@ pub fn create_book<'a>(
 }
 
 pub fn get_book<'a>(
-    conn: &PgConnection, 
+    conn: &PgConnection,
     id: i32
 ) -> std::result::Result<Book, diesel::result::Error> {
     use schema::books;
 
     return books::table.filter(books::id.eq(id)).first(conn);
+}
+
+pub fn update_book<'a>(
+    conn: &PgConnection,
+    id: i32,
+    authors: &'a str,
+    title: &'a str
+) -> QueryResult<Book> {
+    use schema::books;
+
+    let book = Book {
+        id: id,
+        authors: authors.to_owned(),
+        title: title.to_owned(),
+    };
+
+    diesel::update(
+        books::table.filter(books::id.eq(id))
+    ).set(&book).get_result(conn)
 }

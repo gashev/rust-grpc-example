@@ -1,6 +1,6 @@
 use super::schema::books;
 
-#[derive(Queryable)]
+#[derive(Queryable, AsChangeset)]
 pub struct Book {
     pub id: i32,
     pub authors: String,
