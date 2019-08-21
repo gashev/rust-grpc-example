@@ -11,7 +11,6 @@ mod books_grpc;
 use books_grpc::BooksClient;
 use books::{
     AddBookRequest,
-    BookReply,
     BooksReply,
     DeleteBookRequest,
     GetBookRequest,
@@ -29,21 +28,26 @@ pub fn add_book(matches: &clap::ArgMatches<'static>) {
     let authors = matches.value_of("authors").unwrap();
     let title = matches.value_of("title").unwrap();
 
-    println!("{} {}", authors, title);
-
     let mut req = AddBookRequest::default();
     req.set_authors(authors.to_owned());
     req.set_title(title.to_owned());
 
     let client = get_books_client();
-    let reply: BookReply = client.add_book(&req).expect("rpc");
-    println!("received: {}", reply.get_id());
+    let reply = client.add_book(&req);
+
+    match reply {
+        Ok(book) => println!(
+            "received: {} {} {}",
+            book.get_id(),
+            book.get_authors(),
+            book.get_title()
+        ),
+        Err(e) => println!("{:?}", e)
+    }
 }
 
 pub fn get_book(matches: &clap::ArgMatches<'static>) {
     let id = matches.value_of("id").unwrap();
-
-    println!("{}", id);
 
     let mut req = GetBookRequest::default();
     req.set_id(id.parse::<i32>().unwrap());
@@ -74,8 +78,6 @@ pub fn update_book(matches: &clap::ArgMatches<'static>) {
     let authors = matches.value_of("authors").unwrap();
     let title = matches.value_of("title").unwrap();
 
-    println!("{} {} {}", id, authors, title);
-
     let mut req = UpdateBookRequest::default();
     req.set_id(id.parse::<i32>().unwrap());
     req.set_authors(authors.to_owned());
@@ -97,8 +99,6 @@ pub fn update_book(matches: &clap::ArgMatches<'static>) {
 
 pub fn delete_book(matches: &clap::ArgMatches<'static>) {
     let id = matches.value_of("id").unwrap();
-
-    println!("{}", id);
 
     let mut req = DeleteBookRequest::default();
     req.set_id(id.parse::<i32>().unwrap());
