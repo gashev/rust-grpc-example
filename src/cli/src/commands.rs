@@ -11,7 +11,6 @@ mod books_grpc;
 use books_grpc::BooksClient;
 use books::{
     AddBookRequest,
-    BooksReply,
     DeleteBookRequest,
     GetBookRequest,
     GetBooksRequest,
