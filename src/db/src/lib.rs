@@ -36,7 +36,7 @@ pub fn create_book<'a>(
     conn: &PgConnection,
     authors: &'a str,
     title: &'a str
-) -> Book {
+) -> QueryResult<Book> {
     use schema::books;
 
     let new_book = NewBook {
@@ -47,7 +47,6 @@ pub fn create_book<'a>(
     diesel::insert_into(books::table)
         .values(&new_book)
         .get_result(conn)
-        .expect("Error saving new book")
 }
 
 pub fn get_book<'a>(

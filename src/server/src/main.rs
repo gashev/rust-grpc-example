@@ -53,14 +53,27 @@ impl Books for BooksService {
         let mut resp = BookReply::default();
         let authors = _req.get_authors();
         let title = _req.get_title();
-        let book = db::create_book(&self.connection, authors, title);
-        resp.set_id(book.id);
-        resp.set_authors(book.authors);
-        resp.set_title(book.title);
-        let f = _sink
-            .success(resp)
-            .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
-        _ctx.spawn(f)
+        let result = db::create_book(&self.connection, authors, title);
+        match result {
+            Ok(book) => {
+                resp.set_id(book.id);
+                resp.set_authors(book.authors);
+                resp.set_title(book.title);
+                let f = _sink
+                    .success(resp)
+                    .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f)
+            },
+            Err(_e) => {
+                let f = _sink
+                    .fail(RpcStatus::new(
+                        RpcStatusCode::Unknown,
+                        Some(_e.to_string()),
+                    ))
+                .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f);
+            }
+        }
     }
 
     fn get_book(
