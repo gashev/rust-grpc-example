@@ -115,6 +115,34 @@ impl Books for BooksService {
         _sink: UnarySink<BooksReply>
     ) {
         println!("get_books request");
+        let mut resp = BooksReply::default();
+        let result = db::get_books(&self.connection);
+
+        match result {
+            Ok(books) => {
+                for x in &books {
+                    let mut book = BookReply::default();
+                    book.set_id(x.id);
+                    book.set_authors(x.authors.to_owned());
+                    book.set_title(x.title.to_owned());
+                    resp.items.push(book);
+                }
+
+                let f = _sink
+                    .success(resp)
+                    .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f)
+            },
+            Err(_e) => {
+                let f = _sink
+                    .fail(RpcStatus::new(
+                        RpcStatusCode::Unknown,
+                        Some(_e.to_string()),
+                    ))
+                .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f);
+            }
+        }
     }
 
     fn update_book(

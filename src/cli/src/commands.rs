@@ -69,8 +69,21 @@ pub fn get_book(matches: &clap::ArgMatches<'static>) {
 pub fn get_all_books(_matches: &clap::ArgMatches<'static>) {
     let req = GetBooksRequest::default();
     let client = get_books_client();
-    let reply: BooksReply = client.get_books(&req).expect("rpc");
-    println!("{:?}", reply);
+    let reply = client.get_books(&req);
+    match reply {
+        Ok(books) => {
+            println!("received:");
+            for book in books.items.into_vec() {
+                println!(
+                    "{} {} {}",
+                    book.get_id(),
+                    book.get_authors(),
+                    book.get_title()
+                );
+            };
+        },
+        Err(e) => println!("{:?}", e)
+    }
 }
 
 pub fn update_book(matches: &clap::ArgMatches<'static>) {

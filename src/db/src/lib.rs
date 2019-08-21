@@ -53,7 +53,7 @@ pub fn get_book<'a>(
     conn: &PgConnection,
     id: i32
 ) -> std::result::Result<Book, diesel::result::Error> {
-    return books::table.filter(books::id.eq(id)).first(conn);
+    books::table.filter(books::id.eq(id)).first(conn)
 }
 
 pub fn update_book<'a>(
@@ -80,4 +80,10 @@ pub fn delete_book<'a>(
     diesel::delete(
         books::table.filter(books::id.eq(id))
     ).execute(conn)
+}
+
+pub fn get_books<'a>(
+    conn: &PgConnection
+) -> std::result::Result<std::vec::Vec<Book>, diesel::result::Error> {
+    books::table.load::<Book>(conn)
 }
