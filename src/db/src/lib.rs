@@ -15,6 +15,8 @@ use std::env;
 pub mod schema;
 pub mod models;
 
+use schema::books;
+
 use self::models::{Book, NewBook};
 embed_migrations!("./migrations");
 
@@ -37,8 +39,6 @@ pub fn create_book<'a>(
     authors: &'a str,
     title: &'a str
 ) -> QueryResult<Book> {
-    use schema::books;
-
     let new_book = NewBook {
         authors: authors,
         title: title,
@@ -53,8 +53,6 @@ pub fn get_book<'a>(
     conn: &PgConnection,
     id: i32
 ) -> std::result::Result<Book, diesel::result::Error> {
-    use schema::books;
-
     return books::table.filter(books::id.eq(id)).first(conn);
 }
 
@@ -64,8 +62,6 @@ pub fn update_book<'a>(
     authors: &'a str,
     title: &'a str
 ) -> QueryResult<Book> {
-    use schema::books;
-
     let book = Book {
         id: id,
         authors: authors.to_owned(),
