@@ -155,7 +155,28 @@ impl Books for BooksService {
         _ctx: ::grpcio::RpcContext,
         _req: DeleteBookRequest,
         _sink: UnarySink<DeleteBookReply>) {
-            println!("delete_book request");
+        println!("delete_book request");
+        let mut resp = DeleteBookReply::default();
+        let id = _req.get_id();
+        let result = db::delete_book(&self.connection, id);
+        match result {
+            Ok(count) => {
+                resp.set_deleted(count > 0);
+                let f = _sink
+                    .success(resp)
+                    .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f)
+            },
+            Err(_e) => {
+                let f = _sink
+                    .fail(RpcStatus::new(
+                        RpcStatusCode::Unknown,
+                        Some(_e.to_string()),
+                    ))
+                .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                _ctx.spawn(f);
+            }
+        }
         }
 }
 

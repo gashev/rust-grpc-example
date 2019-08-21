@@ -107,9 +107,9 @@ pub fn delete_book(matches: &clap::ArgMatches<'static>) {
     let reply = client.delete_book(&req);
 
     match reply {
-        Ok(book) => println!(
+        Ok(count) => println!(
             "received: {:?}",
-            book
+            count
         ),
         Err(e) => println!("{:?}", e)
     }

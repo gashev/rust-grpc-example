@@ -72,3 +72,12 @@ pub fn update_book<'a>(
         books::table.filter(books::id.eq(id))
     ).set(&book).get_result(conn)
 }
+
+pub fn delete_book<'a>(
+    conn: &PgConnection,
+    id: i32,
+) -> QueryResult<usize> {
+    diesel::delete(
+        books::table.filter(books::id.eq(id))
+    ).execute(conn)
+}
