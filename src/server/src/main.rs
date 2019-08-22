@@ -203,7 +203,7 @@ impl Books for BooksService {
                         RpcStatusCode::Unknown,
                         Some(_e.to_string()),
                     ))
-                .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
+                    .map_err(move |e| println!("failed to reply {:?}: {:?}", _req, e));
                 _ctx.spawn(f);
             }
         }
