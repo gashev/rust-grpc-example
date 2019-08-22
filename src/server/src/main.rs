@@ -149,7 +149,8 @@ impl Books for BooksService {
         &mut self,
         _ctx: ::grpcio::RpcContext,
         _req: UpdateBookRequest,
-        _sink: UnarySink<BookReply>) {
+        _sink: UnarySink<BookReply>
+    ) {
         println!("update_book request");
         let mut resp = BookReply::default();
         let id = _req.get_id();
@@ -182,7 +183,8 @@ impl Books for BooksService {
         &mut self,
         _ctx: ::grpcio::RpcContext,
         _req: DeleteBookRequest,
-        _sink: UnarySink<DeleteBookReply>) {
+        _sink: UnarySink<DeleteBookReply>
+    ) {
         println!("delete_book request");
         let mut resp = DeleteBookReply::default();
         let id = _req.get_id();
