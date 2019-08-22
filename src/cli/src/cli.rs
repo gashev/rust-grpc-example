@@ -25,48 +25,42 @@ fn get_title_argument() -> clap::Arg<'static, 'static> {
 }
 
 fn add_book_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("add")
+    SubCommand::with_name("add")
         .about("add book")
         .arg(get_authors_argument())
-        .arg(get_title_argument());
+        .arg(get_title_argument())
 }
 
 fn get_book_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("get")
+    SubCommand::with_name("get")
         .about("get book")
-        .arg(get_id_argument());
+        .arg(get_id_argument())
 }
 
 fn get_books_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("all")
-        .about("get all books");
+    SubCommand::with_name("all")
+        .about("get all books")
 }
 
 fn update_book_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("update")
+    SubCommand::with_name("update")
         .about("update book")
         .arg(get_id_argument())
         .arg(get_authors_argument())
-        .arg(get_title_argument());
+        .arg(get_title_argument())
 }
 
 fn delete_book_command() -> clap::App<'static, 'static> {
-    return
-        SubCommand::with_name("delete")
+    SubCommand::with_name("delete")
         .about("delete book")
-        .arg(get_id_argument());
+        .arg(get_id_argument())
 }
 
 pub fn get_cli() -> clap::App<'static, 'static> {
-    return
-        App::new("cli")
+    App::new("cli")
         .subcommand(add_book_command())
         .subcommand(get_book_command())
         .subcommand(get_books_command())
         .subcommand(update_book_command())
-        .subcommand(delete_book_command());
+        .subcommand(delete_book_command())
 }
