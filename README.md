@@ -5,6 +5,14 @@ Rust grpc client/server example using diesel and postgresql.
 
 Requirements: docker, make
 
+Add to `/etc/hosts` file:
+
+```
+127.0.0.1 docker-local
+```
+
+Make push docker images into the `docker-local:5000` registry.
+
 Up docker registry:
 
 ```
