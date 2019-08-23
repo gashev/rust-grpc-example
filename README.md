@@ -13,7 +13,6 @@ Build:
 
 ```
 # make
-
 ```
 
 # Running locally using docker-compose
