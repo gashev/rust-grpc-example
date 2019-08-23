@@ -22,7 +22,7 @@ Build:
 ## Start dockers
 
 ```
-make start
+# make start
 ```
 
 ## Stop dockers
@@ -42,5 +42,5 @@ make start
 ### Delete pod
 
 ```
-make delete_pod
+# make delete_pod
 ```
