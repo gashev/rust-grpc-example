@@ -3,7 +3,7 @@ Rust grpc client/server example using diesel and postgresql.
 
 # Build
 
-Requirements: make, docker
+Requirements: docker, make
 
 Up docker registry:
 
