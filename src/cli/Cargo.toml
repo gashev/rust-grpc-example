@@ -9,5 +9,5 @@ edition = "2018"
 [dependencies]
 futures = "0.1"
 grpcio = "0.4"
-protobuf = { version = "2", features = ["with-bytes"] }
+protobuf = { version = "2.8.1", features = ["with-bytes"] }
 clap = "2.33"
